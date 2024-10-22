@@ -13,3 +13,9 @@ trivy scan image
 ```bash
 docker run --rm ghcr.io/rootshell-coder/trivy-cached:latest image quay.io/keycloak/keycloak:latest
 ```
+
+or
+
+```bash
+docker run --rm ghcr.io/rootshell-coder/trivy-cached:latest image quay.io/keycloak/keycloak:latest --format json
+```

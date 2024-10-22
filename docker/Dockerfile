@@ -14,5 +14,5 @@ RUN set -eux; \
 
 USER trivy
 WORKDIR /home/trivy
-VOLUME /home/trivy/.cache/
+VOLUME [ "/home/trivy/.cache" ]
 ENTRYPOINT [ "/usr/local/bin/trivy", "--cache-dir", "/home/trivy/.cache" ]
