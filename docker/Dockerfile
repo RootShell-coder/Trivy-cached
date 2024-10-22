@@ -1,10 +1,17 @@
-FROM ghcr.io/aquasecurity/trivy:canary
+FROM ghcr.io/aquasecurity/trivy:latest
 
 RUN set -eux; \
-  mkdir -p /root/.cache/db root/.cache/java-db root/.cache/fanal; \
+  addgroup -S trivy; \
+  adduser -S trivy -G trivy -h /home/trivy -s /bin/sh; \
+  mkdir -p /home/trivy/.cache/fanal; \
+  chown -R trivy:trivy /home/trivy;
+
+COPY --chown=trivy:trivy ./trivy_cache/ /home/trivy/.cache/
 
 RUN set -eux; \
-   TRIVY_TEMP_DIR=$(mktemp -d); \
-   trivy --cache-dir $TRIVY_TEMP_DIR image --download-db-only\; \
-#   tar -cf ./db.tar.gz -C $TRIVY_TEMP_DIR/db ./cache/db/metadata.json ./cache/db/trivy.db; \
-#   rm -rf $TRIVY_TEMP_DIR;
+  ls -lah /home/trivy/.cache/db/trivy.db; \
+  ls -lah /home/trivy/.cache/java-db/trivy-java.db;
+
+USER trivy
+WORKDIR /home/trivy
+ENTRYPOINT [ "/usr/local/bin/trivy", "--cache-dir", "/home/trivy/.cache" ]
