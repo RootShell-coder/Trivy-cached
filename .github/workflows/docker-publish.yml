@@ -5,13 +5,13 @@ on:
   push:
     branches: [ "master" ]
     paths:
-      - 'github/**'
+      - '.github/**'
       - 'docker/**'
       - 'build_trivy_cached.sh'
   pull_request:
     branches: [ "master" ]
     paths:
-      - 'github/**'
+      - '.github/**'
       - 'docker/**'
       - 'build_trivy_cached.sh'
 
