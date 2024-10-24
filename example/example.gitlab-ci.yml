@@ -1,0 +1,38 @@
+---
+stages:
+  - runner_test
+
+image: docker:dind
+
+services:
+  - name: docker:dind
+    alias: docker
+
+variables:
+  DOCKER_HOST: tcp://docker:2376
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+
+  DOCKER_IMAGE_NAME:
+    value: ""
+    description: "docker image name to scan. Full path with host and tag (:latest if tag is unknown)"
+
+runner_test:
+  stage: runner_test
+  tags:
+    - dind_runner
+  script:
+    - echo ${DOCKER_IMAGE_NAME}
+    - docker pull ${DOCKER_IMAGE_NAME}
+    - |+
+      docker run --rm \
+      ghcr.io/rootshell-coder/trivy-cached:latest \
+      image ${DOCKER_IMAGE_NAME} --skip-db-update > ./report.txt
+  artifacts:
+    paths:
+      - report.txt
+    expire_in: 1 day
+  rules:
+    - if: $DOCKER_IMAGE_NAME != ""
+      when: on_success
+    - when: never
